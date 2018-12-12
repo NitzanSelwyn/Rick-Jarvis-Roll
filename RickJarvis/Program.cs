@@ -16,7 +16,7 @@ namespace RickJarvis
 
         private static int speachSpeed = 1;
 
-        private static Process p1 = new Process();
+        private static Process p1;
 
         private static ManagementEventWatcher watcher = new ManagementEventWatcher("Select * From Win32_ProcessStopTrace");
 
@@ -30,7 +30,6 @@ namespace RickJarvis
             while (true)
             {
                 int currentCpu = (int)perfCpuCounter.NextValue();
-                Console.WriteLine($"CPU {currentCpu}");
 
                 if (speachSpeed < 5)
                 {
@@ -49,7 +48,6 @@ namespace RickJarvis
                     if (isRunning == false)
                     {
                         OpenWeb(rolledURL);
-
                     }
                 }
                 Thread.Sleep(1000);
@@ -71,6 +69,8 @@ namespace RickJarvis
 
         private static void OpenWeb(string URL)
         {
+             p1 = new Process();
+
             p1.StartInfo.FileName = "chrome.exe";
             p1.StartInfo.Arguments = URL;
             p1.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
