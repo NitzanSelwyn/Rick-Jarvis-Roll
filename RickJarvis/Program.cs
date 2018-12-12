@@ -27,6 +27,8 @@ namespace RickJarvis
         {
             PerformanceCounter perfCpuCounter = new PerformanceCounter("Processor Information", "% Processor Time", "_Total");
 
+            bool IsOpen = false;
+
             while (true)
             {
                 int currentCpu = (int)perfCpuCounter.NextValue();
@@ -42,13 +44,18 @@ namespace RickJarvis
                     string cpuload = string.Format("warning! holy crap your cpu is on fire!");
                     Speaker(cpuload, VoiceGender.Female, speachSpeed);
 
-                    OpenWeb(rolledURL);
+                    if (IsOpen == false)
+                    {
+                        OpenWeb(rolledURL);
+                        IsOpen = true;
+                    }
 
                     bool isRunning = Process.GetProcessesByName(p1.ProcessName).Any();
                     if (isRunning == false)
                     {
-                        OpenWeb(rolledURL);
+                        IsOpen = false;
                     }
+
                 }
                 Thread.Sleep(1000);
             }
@@ -69,7 +76,7 @@ namespace RickJarvis
 
         private static void OpenWeb(string URL)
         {
-             p1 = new Process();
+            p1 = new Process();
 
             p1.StartInfo.FileName = "chrome.exe";
             p1.StartInfo.Arguments = URL;
