@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Speech.Synthesis;
 using System.Text;
 using System.Threading;
@@ -15,11 +16,16 @@ namespace RickJarvis
 
         private static int speachSpeed = 1;
 
+        private static Process p1 = new Process();
+
+        private static ManagementEventWatcher watcher = new ManagementEventWatcher("Select * From Win32_ProcessStopTrace");
+
+        private static string rolledURL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+
+
         static void Main(string[] args)
         {
             PerformanceCounter perfCpuCounter = new PerformanceCounter("Processor Information", "% Processor Time", "_Total");
-
-            bool isChromeOpen = false;
 
             while (true)
             {
@@ -36,16 +42,20 @@ namespace RickJarvis
                 {
                     string cpuload = string.Format("warning! holy crap your cpu is on fire!");
                     Speaker(cpuload, VoiceGender.Female, speachSpeed);
-                    if (isChromeOpen == false)
+
+                    OpenWeb(rolledURL);
+
+                    bool isRunning = Process.GetProcessesByName(p1.ProcessName).Any();
+                    if (isRunning == false)
                     {
-                        OpenWeb("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                        OpenWeb(rolledURL);
+
                     }
-
-                    Thread.Sleep(1000);
-
                 }
+                Thread.Sleep(1000);
             }
         }
+
 
         private static void Speaker(string message, VoiceGender voiceGender)
         {
@@ -61,7 +71,6 @@ namespace RickJarvis
 
         private static void OpenWeb(string URL)
         {
-            Process p1 = new Process();
             p1.StartInfo.FileName = "chrome.exe";
             p1.StartInfo.Arguments = URL;
             p1.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
